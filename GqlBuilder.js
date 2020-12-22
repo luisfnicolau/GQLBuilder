@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-class GqlBuilder {
+export default class GqlBuilder {
     constructor() {
         this.queries = [];
         this.mutations = []
@@ -83,5 +83,3 @@ class GqlBuilder {
         return objString
     }
 }
-
-module.exports = GqlBuilder
