@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "Create queries and mutations dinamically",
   "main": "GqlBuilder.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "publish": "npm publish --access public"
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/luisfnicolau/GQLBuilder#readme",
   "dependencies": {
+    "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0"
   }
 }

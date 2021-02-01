@@ -10,8 +10,8 @@ export default class GqlBuilder {
             .replace(/(.*?){/, "")
             .slice(0, -1);
     for (let variable in variables) {
-        queryString = queryString.replaceAll(
-            `$${variable}`,
+        queryString = queryString.replace(
+            `/$${variable}/g`,
             typeof variables[variable] === "object" ?
                 variables[variable].map(v => {
                     return typeof v === "string" ? `"${v}"` : v
@@ -43,17 +43,36 @@ export default class GqlBuilder {
         `;
     }
     addMutation({mutation, variables, label}) {
-        let mutationString = mutation.loc.source.body.replaceAll('\n', '').replaceAll('\r', '').replace(/(.*?){/, '').slice(0, -1)
+        let variablesTypes = {}
         for (let variable in variables) {
-            mutationString = mutationString.replaceAll(
-                `$${variable}`,
-                typeof variables[variable] === "object" ?
-                  Array.isArray(variables[variable]) ?
-                    variables[variable].map(v => {
-                        return typeof v === "string" ? `"${v}"` : v
-                    }).toString() :
-                    this.formatObject(variables[variable])
-                    : typeof variables[variable] === 'string' ? `"${variables[variable]}"` : variables[variable])
+            let varType = mutation.loc.source.body.match(`(\\$${variable}:\\s*)(\\w+)`)[2]
+            variablesTypes[variable] = varType
+        }
+        let mutationString = this.getInsideQueries(mutation.loc.source.body)
+        for (let variable in variables) {
+            switch (variablesTypes[variable]) {
+                case 'String':
+                    mutationString = mutationString.replace(`\$${variable}`, `"${variables[variable]}"`)
+                    break;
+                case 'ID':
+                    mutationString = mutationString.replace(`\$${variable}`, `"${variables[variable]}"`)
+                    break;
+                case '_Neo4jInputDateTime':
+                    mutationString = mutationString.replace(`\$${variable}`, this.formatObject(variables[variable]))
+                    break;
+                default:
+                    mutationString = mutationString.replace(`\$${variable}`, variables[variable])
+                    break
+            }
+            // mutationString = mutationString.replace(
+            //     `/$${variable}/g`,
+            //     typeof variables[variable] === "object" ?
+            //       Array.isArray(variables[variable]) ?
+            //         variables[variable].map(v => {
+            //             return typeof v === "string" ? `"${v}"` : v
+            //         }).toString() :
+            //         this.formatObject(variables[variable])
+            //         : typeof variables[variable] === 'string' ? `"${variables[variable]}"` : variables[variable])
         }
         this.mutations.push({
             label: label,
@@ -62,11 +81,11 @@ export default class GqlBuilder {
         return mutationString
     }
     getMutationString() {
-        let stringMutation = `mutation {`
+        let stringMutation = `mutation {\n`
         for (let mutation in this.mutations) {
-            stringMutation += `${this.mutations[mutation].label || 'mutation' + mutation}:${this.mutations[mutation].mutation},`
+            stringMutation += `${this.mutations[mutation].label || 'mutation' + mutation}:${this.mutations[mutation].mutation},\n`
         }
-        stringMutation += `}`
+        stringMutation += `\n}`
         return stringMutation
     }
     generateMutationRequest() {
@@ -81,5 +100,20 @@ export default class GqlBuilder {
         }
         objString += '}'
         return objString
+    }
+
+    reverseString(str) {
+        let splitString = str.split("");
+        let reverseArray = splitString.reverse();
+        let joinArray = reverseArray.join("");
+        return joinArray;
+    }
+
+    getInsideQueries(gqlFileContent) {
+        let mutationString = gqlFileContent
+          .match(/{([\S\s]*)/g)[0]
+        mutationString = mutationString.replace(/([{\n\r\s]+)/, '')
+        mutationString = this.reverseString(this.reverseString(mutationString).replace(/([}\s\n\r]+)/, '')) + ' \n}'
+        return mutationString
     }
 }

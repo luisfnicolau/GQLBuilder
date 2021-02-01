@@ -1,0 +1,22 @@
+mutation createTask(
+    $id: ID!
+    $string: String
+    $number: Number
+    $dateString: String
+    $dateTimeInput: _Neo4jInputDateTime
+    $enum: TaskType!
+) {
+    CreateTask(
+        id: $id
+        string: $string
+        number: $number
+        dateString: $dateString
+        dateTimeInput: $dateTimeInput
+        enum: $enum
+    ) {
+        id
+        name
+        description
+        type
+    }
+}
