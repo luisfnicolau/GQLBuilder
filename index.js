@@ -12,6 +12,9 @@ builder.addMutation({
           $dateString: String
           $dateTimeInput: _Neo4jInputDateTime
           $enum: TaskType!
+          $stringArray: [String]
+          $intArray: [Int]
+          $dateArray: [_Neo4jInputDateTime]
       ) {
           CreateTask(
               id: $id
@@ -20,6 +23,9 @@ builder.addMutation({
               dateString: $dateString
               dateTimeInput: $dateTimeInput
               enum: $enum
+              stringArray: $stringArray
+              intArray: $intArray
+              dateArray: $dateArray
           ) {
               id
               name
@@ -32,10 +38,23 @@ builder.addMutation({
     id: "1234-1234",
     string: "Uma string",
     number: 42,
+    stringArray: ["a", "b", "c"],
+    intArray: [1, 2, 3],
     dateString: "2021-01-31T00:00:00",
     dateTimeInput: {
       formatted: "2021-01-3100:00:00"
     },
+    dateArray: [
+      {
+        formatted: "2021-01-3100:00:00"
+      },
+      {
+        formatted: "2021-01-3100:00:00"
+      },
+      {
+        formatted: "2021-01-3100:00:00"
+      }
+    ],
     enum: "MyEnum"
   }
 })

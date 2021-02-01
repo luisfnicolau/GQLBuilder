@@ -82,11 +82,41 @@ export default class GqlBuilder {
   generateQueryString({query, variables}) {
     let variablesTypes = {}
     for (let variable in variables) {
-      let varType = query.loc.source.body.match(`(\\$${variable}:\\s*)(\\w+)`)[2]
+      let varType = query.loc.source.body.match(`(\\$${variable}:\\s*)(\\[*\\w+\\]*)`)[2]
       variablesTypes[variable] = varType
     }
     let queryString = this.getInsideQueries(query.loc.source.body)
     for (let variable in variables) {
+      if (variablesTypes[variable].substring(0, 1) === '[') {
+        let arrayType = variablesTypes[variable].substring(1, variablesTypes[variable].length - 1)
+        let generatedArray = '['
+        switch (arrayType) {
+          case 'String':
+            for (let value of variables[variable]) {
+              generatedArray += `"${value}",`
+            }
+            break;
+          case 'ID':
+            for (let value of variables[variable]) {
+              generatedArray += `"${value}",`
+            }
+            break;
+          case '_Neo4jInputDateTime':
+            for (let value of variables[variable]) {
+              generatedArray += `${this.formatObject(value)},`
+            }
+            break;
+          default:
+            for (let value of variables[variable]) {
+              generatedArray += `${value},`
+            }
+        }
+        generatedArray = generatedArray.substring(0, generatedArray.length - 1)
+        generatedArray += ']'
+        queryString = queryString.replace(`\$${variable}`, `${generatedArray}`)
+        console.log(arrayType, generatedArray)
+        continue
+      }
       switch (variablesTypes[variable]) {
         case 'String':
           queryString = queryString.replace(`\$${variable}`, `"${variables[variable]}"`)
@@ -101,15 +131,6 @@ export default class GqlBuilder {
           queryString = queryString.replace(`\$${variable}`, variables[variable])
           break
       }
-      // queryString = queryString.replace(
-      //     `/$${variable}/g`,
-      //     typeof variables[variable] === "object" ?
-      //       Array.isArray(variables[variable]) ?
-      //         variables[variable].map(v => {
-      //             return typeof v === "string" ? `"${v}"` : v
-      //         }).toString() :
-      //         this.formatObject(variables[variable])
-      //         : typeof variables[variable] === 'string' ? `"${variables[variable]}"` : variables[variable])
     }
     return queryString
   }
