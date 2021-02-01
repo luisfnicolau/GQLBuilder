@@ -5,7 +5,7 @@ let builder = new gqlBuilder()
 
 builder.addMutation({
   mutation: gql`
-      mutation createTask(
+      mutation createMutation(
           $id: ID!
           $string:    String
           $number:Int
@@ -16,7 +16,7 @@ builder.addMutation({
           $intArray: [Int]
           $dateArray: [_Neo4jInputDateTime]
       ) {
-          CreateTask(
+          CreateMutation(
               id: $id
               string: $string
               number: $number
@@ -61,11 +61,11 @@ builder.addMutation({
 
 builder.addMutation({
   mutation: gql`
-      mutation createTask(
+      mutation createMutation(
           $id: ID!
           $string:    String
       ) {
-          CreateTask(
+          CreateMutation(
               id: $id
               string: $string
           ) {

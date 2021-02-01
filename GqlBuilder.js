@@ -114,7 +114,6 @@ export default class GqlBuilder {
         generatedArray = generatedArray.substring(0, generatedArray.length - 1)
         generatedArray += ']'
         queryString = queryString.replace(`\$${variable}`, `${generatedArray}`)
-        console.log(arrayType, generatedArray)
         continue
       }
       switch (variablesTypes[variable]) {
