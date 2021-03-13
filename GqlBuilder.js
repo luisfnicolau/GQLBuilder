@@ -46,7 +46,7 @@ export default class GqlBuilder {
     for (let mutation in this.mutations) {
       stringMutation += `${this.mutations[mutation].label || 'mutation' + mutation}:${this.mutations[mutation].mutation},\n`
     }
-    stringMutation += `\n}`
+    stringMutation += `\n}\n}`
     return stringMutation
   }
 
