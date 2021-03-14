@@ -1,6 +1,6 @@
 {
   "name": "@luisnicolau/gql-builder",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Create queries and mutations dynamically",
   "main": "GqlBuilder.js",
   "type": "module",
