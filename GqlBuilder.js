@@ -46,7 +46,7 @@ export default class GqlBuilder {
     for (let mutation in this.mutations) {
       stringMutation += `${this.mutations[mutation].label || 'mutation' + mutation}:${this.mutations[mutation].mutation},\n`
     }
-    stringMutation += `\n}\n}`
+    stringMutation += `\n}`
     return stringMutation
   }
 
@@ -75,7 +75,7 @@ export default class GqlBuilder {
     let mutationString = gqlFileContent
       .match(/{([\S\s]*)/g)[0]
     mutationString = mutationString.replace(/([{\n\r\s]+)/, '')
-    mutationString = this.reverseString(this.reverseString(mutationString).replace(/([}\s\n\r]+)/, '')) + ' \n}'
+    mutationString = this.reverseString(this.reverseString(mutationString).replace(/([}\s\n\r]+)/, '')) + ' \n}\n}'
     return mutationString
   }
 
