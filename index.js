@@ -30,7 +30,9 @@ builder.addMutation({
               id
               name
               description
-              type
+              type {
+                  deep1
+              }
           }
       }
   `,

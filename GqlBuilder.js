@@ -75,7 +75,7 @@ export default class GqlBuilder {
     let mutationString = gqlFileContent
       .match(/{([\S\s]*)/g)[0]
     mutationString = mutationString.replace(/([{\n\r\s]+)/, '')
-    mutationString = this.reverseString(this.reverseString(mutationString).replace(/([}\s\n\r]+)/, '')) + ' \n}\n}'
+    mutationString = this.reverseString(this.reverseString(mutationString).replace(/(}[\s\n\r]+)/, ''))
     return mutationString
   }
 
