@@ -59,26 +59,12 @@ builder.addMutation({
     ],
     enum: "MyEnum"
   }
+
 })
 
-builder.addMutation({
-  mutation: gql`
-      mutation createMutation(
-          $id: ID!
-          $string:    String
-      ) {
-          CreateMutation(
-              id: $id
-              string: $string
-          ) {
-              id
-          }
-      }
-  `,
-  variables: {
-    id: "1234-1234",
-    string: "Uma string",
-  }
-})
+console.log(builder.getMutationString())
 
 console.log(builder.generateMutationRequest().loc.source.body)
+
+
+
